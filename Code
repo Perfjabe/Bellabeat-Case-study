@@ -1,1 +1,41 @@
+# Load libraries
+library(tidyverse)
+library(lubridate)
+
+# Import dataset
+daily_activity <- read.csv("data/dailyActivity.csv")
+sleep_data <- read.csv("data/sleepDay.csv")
+
+# Cleaning steps
+daily_activity <- daily_activity %>%
+    rename_with(tolower) %>%
+    mutate(activity_date = as.Date(activity_date, format = "%m/%d/%Y"))
+
+sleep_data <- sleep_data %>%
+    rename_with(tolower) %>%
+    mutate(sleep_day = as.Date(sleep_day, format = "%m/%d/%Y"))
+# Merge datasets
+merged_data <- merge(daily_activity, sleep_data, by.x = "id", by.y = "id", all = TRUE)
+
+# Summarize data
+summary(merged_data)
+
+# Explore relationships
+ggplot(merged_data, aes(x = total_steps, y = calories)) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "lm", col = "red") +
+    labs(title = "Steps vs Calories Burned",
+         x = "Total Steps", y = "Calories Burned")
+# Plot 1: Daily Steps
+ggplot(daily_activity, aes(x = total_steps)) +
+    geom_histogram(binwidth = 1000, fill = "steelblue", color = "white") +
+    labs(title = "Distribution of Daily Steps",
+         x = "Total Steps", y = "Frequency")
+
+# Plot 2: Sleep vs Activity
+ggplot(merged_data, aes(x = total_minutes_asleep, y = calories)) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "lm", col = "red") +
+    labs(title = "Sleep vs Calories Burned",
+         x = "Total Minutes Asleep", y = "Calories Burned")
 

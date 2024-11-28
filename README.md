@@ -25,6 +25,6 @@ The project uses the [Fitbit Fitness Tracker Data](https://www.kaggle.com/datase
 - **Sleep Data:** Minutes asleep, time in bed.
 - **Weight Data:** BMI and weight logs.
 
-> **Note:** The datasets used in this analysis are available in the `data/` folder. If accessing this project externally, please download the dataset from Kaggle and place it in the `data/` directory.
+> **Note:** The datasets used in this analysis are available in the `data/` folder.
 
 ---

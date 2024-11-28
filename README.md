@@ -14,9 +14,9 @@ Bellabeat, a high-tech company focusing on women's wellness, aims to:
 ---
 
 ## 🛠 Tools Used
-tidyverse  # For data manipulation and visualization
-lubridate  # For date and time formatting
-ggplot2    # For data visualization
+- **tidyverse**  # For data manipulation and visualization
+- **lubridate**  # For date and time formatting
+- **ggplot2**    # For data visualization
 ---
 
 ## 📊 Dataset

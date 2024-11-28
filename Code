@@ -3,6 +3,8 @@ Code/
 ├── exploratory_analysis.R # Performs exploratory data analysis
 ├── visualizations.R      # Generates visualizations
 
+data_cleaning.R
+
 # Load necessary libraries
 library(tidyverse)  # For data manipulation and visualization
 library(lubridate)  # For date and time formatting
@@ -52,6 +54,9 @@ activity_sleep <- daily_activity %>%
 activity_calories_intensity <- activity_calories %>%
   inner_join(daily_intensities, by = c("Id", "ActivityDate" = "ActivityDay"))
 
+exploratory_analysis.R
+
+
 # Calculate correlation between Total Steps and Calories Burned (from Calories.x)
 steps_calories_correlation <- cor(activity_calories$TotalSteps, activity_calories$Calories.x, use = "complete.obs")
 print(paste("Correlation between Total Steps and Calories Burned:", round(steps_calories_correlation, 2)))
@@ -80,6 +85,8 @@ activity_level_percentage <- activity_calories_intensity %>%
 
 # View the results
 print(activity_level_percentage)
+
+visualizations.R
 
 # Box plot for Calories Burned by Activity Level
 ggplot(activity_calories_intensity, aes(x = ActivityLevel, y = Calories.x, fill = ActivityLevel)) +

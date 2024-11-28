@@ -1,0 +1,143 @@
+Code/
+├── data_cleaning.R       # Handles data preparation and cleaning
+├── exploratory_analysis.R # Performs exploratory data analysis
+├── visualizations.R      # Generates visualizations
+
+data_cleaning.R
+
+# Load necessary libraries
+library(tidyverse)  # For data manipulation and visualization
+library(lubridate)  # For date and time formatting
+library(ggplot2)    # For data visualization
+
+# Load datasets
+daily_activity <- read_csv("/kaggle/input/fitbit/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv")
+daily_calories <- read_csv("/kaggle/input/fitbit/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/dailyCalories_merged.csv")
+daily_steps <- read_csv("/kaggle/input/fitbit/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/dailySteps_merged.csv")
+sleep_data <- read_csv("/kaggle/input/fitbit/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/sleepDay_merged.csv")
+daily_intensities <- read_csv("/kaggle/input/fitbit/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/dailyIntensities_merged.csv")
+
+# Cleaning steps
+
+# Remove duplicate rows
+daily_activity <- daily_activity %>% distinct()
+daily_calories <- daily_calories %>% distinct()
+daily_steps <- daily_steps %>% distinct()
+sleep_data <- sleep_data %>% distinct()
+daily_intensities <- daily_intensities %>% distinct()
+
+# Format date columns
+daily_activity <- daily_activity %>%
+  mutate(ActivityDate = mdy(ActivityDate))
+
+daily_calories <- daily_calories %>%
+  mutate(ActivityDay = mdy(ActivityDay))
+
+daily_steps <- daily_steps %>%
+  mutate(ActivityDay = mdy(ActivityDay))
+
+sleep_data <- sleep_data %>%
+  mutate(SleepDay = mdy_hms(SleepDay))
+
+daily_intensities <- daily_intensities %>%
+  mutate(ActivityDay = mdy(ActivityDay))
+
+# Merge daily_activity and daily_calories
+activity_calories <- daily_activity %>%
+  inner_join(daily_calories, by = c("Id", "ActivityDate" = "ActivityDay"))
+
+# Merge daily_activity and sleep_data
+activity_sleep <- daily_activity %>%
+  inner_join(sleep_data, by = c("Id", "ActivityDate" = "SleepDay"))
+
+# Merge daily_activity, daily_calories, and daily_intensities
+activity_calories_intensity <- activity_calories %>%
+  inner_join(daily_intensities, by = c("Id", "ActivityDate" = "ActivityDay"))
+
+exploratory_analysis.R
+
+
+# Calculate correlation between Total Steps and Calories Burned (from Calories.x)
+steps_calories_correlation <- cor(activity_calories$TotalSteps, activity_calories$Calories.x, use = "complete.obs")
+print(paste("Correlation between Total Steps and Calories Burned:", round(steps_calories_correlation, 2)))
+
+# Calculate correlation between Total Steps and Sedentary Minutes
+steps_sedentary_correlation <- cor(daily_activity$TotalSteps, daily_activity$SedentaryMinutes, use = "complete.obs")
+print(paste("Correlation between Total Steps and Sedentary Minutes:", round(steps_sedentary_correlation, 2)))
+
+# Calculate correlation between Total Calories and Very Active Minutes
+calories_active_correlation <- cor(activity_calories_intensity$Calories.x, activity_calories_intensity$VeryActiveMinutes.x, use = "complete.obs")
+print(paste("Correlation between Calories and Very Active Minutes:", round(calories_active_correlation, 2)))
+
+# Add ActivityLevel column
+activity_calories_intensity <- activity_calories_intensity %>%
+  mutate(ActivityLevel = case_when(
+    TotalSteps < 5000 ~ "Low",
+    TotalSteps >= 5000 & TotalSteps < 10000 ~ "Moderate",
+    TotalSteps >= 10000 ~ "High"
+  ))
+
+# Calculate the percentage of each ActivityLevel
+activity_level_percentage <- activity_calories_intensity %>%
+  group_by(ActivityLevel) %>%
+  summarise(Count = n()) %>%
+  mutate(Percentage = (Count / sum(Count)) * 100)
+
+# View the results
+print(activity_level_percentage)
+
+visualizations.R
+
+# Box plot for Calories Burned by Activity Level
+ggplot(activity_calories_intensity, aes(x = ActivityLevel, y = Calories.x, fill = ActivityLevel)) +
+  geom_boxplot() +
+  labs(title = "Calories Burned Across Activity Levels", x = "Activity Level", y = "Calories Burned") +
+  theme_minimal()
+
+ggplot(activity_calories, aes(x = TotalSteps, y = Calories.y)) +
+  geom_point(alpha = 0.5, color = "steelblue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(
+    title = "Relationship Between Total Steps and Calories Burned",
+    x = "Total Steps",
+    y = "Calories Burned"
+  ) +
+  theme_minimal()
+
+# Plot distribution of total steps
+ggplot(daily_activity, aes(x = TotalSteps)) +
+  geom_histogram(binwidth = 1000, fill = "steelblue", color = "white") +
+  labs(title = "Distribution of Total Steps", x = "Total Steps", y = "Frequency") +
+  theme_minimal()
+
+# Plot Total Minutes Asleep distribution
+ggplot(activity_sleep, aes(x = TotalMinutesAsleep)) +
+  geom_histogram(binwidth = 30, fill = "steel blue", color = "white") +
+  labs(title = "Distribution of Sleep Duration", x = "Minutes Asleep", y = "Frequency") +
+  theme_minimal()
+
+# Plot Sleep vs Steps
+ggplot(activity_sleep, aes(x = TotalMinutesAsleep, y = TotalSteps)) +
+  geom_point(alpha = 0.6, color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Correlation Between Sleep Duration and Total Steps",
+       x = "Total Minutes Asleep",
+       y = "Total Steps") +
+  theme_minimal()
+
+# Add ActivityLevel column
+activity_calories_intensity <- activity_calories_intensity %>%
+  mutate(ActivityLevel = case_when(
+    TotalSteps < 5000 ~ "Low",
+    TotalSteps >= 5000 & TotalSteps < 10000 ~ "Moderate",
+    TotalSteps >= 10000 ~ "High"
+  ))
+
+# Plot distribution of activity levels
+ggplot(activity_calories_intensity, aes(x = ActivityLevel, fill = ActivityLevel)) +
+  geom_bar() +
+  labs(title = "User Segmentation by Activity Levels",
+       x = "Activity Level",
+       y = "Count") +
+  scale_fill_manual(values = c("Low" = "red", "Moderate" = "yellow", "High" = "green")) +
+  theme_minimal()

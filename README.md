@@ -1,24 +1,22 @@
-# Bellabeat Case Study
+Bellabeat Case Study
+Overview
+This project analyzes Fitbit fitness tracker data to uncover trends in user activity, sleep patterns, and calorie consumption. The insights aim to help Bellabeat improve its marketing strategy, product development, and user engagement.
 
-## Overview
-This project analyzes Fitbit fitness tracker data to identify trends in user activity, sleep patterns, and their relationship with calories burned. The goal is to provide actionable insights for Bellabeat’s marketing strategy to enhance customer engagement and increase product adoption.
+Business Objective
+Bellabeat, a high-tech company focusing on women's wellness, aims to:
 
-## Business Objective
-Bellabeat aims to grow its presence in the wellness tech market. The primary objectives are:
-- To understand how activity levels and sleep patterns affect wellness.
-- To identify trends that can inform product features and marketing strategies.
+Understand user behavior: Analyze activity levels, sleep data, and calorie consumption patterns.
+Identify trends: Use data-driven insights to inform product design and marketing strategies.
+Increase user engagement: Develop targeted campaigns to promote wellness among customers.
+Tools Used
+R: For data cleaning, analysis, and visualization.
+ggplot2: For creating professional visualizations.
+Tableau: For interactive dashboards and storytelling.
+Excel: For quick summaries and exploratory analysis.
+Dataset
+The project uses the Fitbit Fitness Tracker Data, which includes:
 
-## Tools Used
-- **R:** Data cleaning, analysis, and visualization.
-- **ggplot2:** For advanced visualizations.
-- **Tableau:** To create dashboards (links below).
-- **Excel:** For data summaries.
-
-## Dataset
-The analysis is based on the [Fitbit Fitness Tracker Data](https://www.kaggle.com/datasets/arashnic/fitbit).  
-The dataset contains:
-- Activity data (steps, calories, distances, etc.).
-- Sleep data (minutes asleep, time in bed).
-- Weight data (BMI and weight logs).
-
-## Repository Structure
+Daily activity: Steps, calories burned, distances covered.
+Sleep data: Minutes asleep, time in bed.
+Weight tracking: BMI, weight logs.
+Note: The dataset is hosted on Kaggle. For this analysis, it is pre-processed and saved in the data/ folder.
